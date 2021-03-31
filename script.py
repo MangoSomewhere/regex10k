@@ -2,18 +2,28 @@
 import pdfplumber
 
 import os
+import re
 
-os.chdir('/Users/drew/Desktop/pythonProject/regex10k/example')
 
-test = os.listdir('/Users/drew/Desktop/pythonProject/regex10k/example')
-print(test)
+
 def extract_whole():
+    os.chdir('/Users/drew/Desktop/pythonProject/regex10k/example')
 
+    test = os.listdir('/Users/drew/Desktop/pythonProject/regex10k/example')
 
+    for file in test:
+        with pdfplumber.open(file) as pdf:
+            firstPage = pdf.pages[0]
+            text = firstPage.extract_text()
+            result = text
 
-    for files in test:
+        companyNameSO = re.compile(r'(\w*) ?(\w*) (CO\.|CORPORATION|INC\.)')
+
+        mo = companyNameSO.search(result)
+
+        print(mo)
         # open each file as the pdf var
-        with pdfplumber.open(files) as pdf:
+        with pdfplumber.open(file) as pdf:
             # stores max number of pages within var
             all_pages = len(pdf.pages)
             # loop through the entire document to extract data from pages and store within var result
@@ -23,8 +33,8 @@ def extract_whole():
                 data.split('\n')
                 result = result + '\n' + data
 
-        # close pdf to make room for another
-        pdf.close()
+    # close pdf to make room for another
+    pdf.close()
 
 
 extract_whole()
